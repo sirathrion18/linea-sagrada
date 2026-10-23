@@ -1,0 +1,51 @@
+name: Armar APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Mapa de ciudades sin internet (GeoNames)
+        run: |
+          curl -fsSL --retry 3 -o cities5000.zip https://download.geonames.org/export/dump/cities5000.zip
+          unzip -o cities5000.zip
+          mkdir -p app/src/main/assets
+          python3 tools/cities.py cities5000.txt app/src/main/assets/cities.tsv
+
+      - name: Compilar
+        run: gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Renombrar
+        run: cp app/build/outputs/apk/release/app-release.apk LineaSagrada.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LineaSagrada
+          path: LineaSagrada.apk
+
+      - name: Publicar versión
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Línea Sagrada 1.0.${{ github.run_number }}
+          body: "Bajá LineaSagrada.apk desde el celu e instalalo encima de la versión anterior."
+          files: LineaSagrada.apk
+          make_latest: true

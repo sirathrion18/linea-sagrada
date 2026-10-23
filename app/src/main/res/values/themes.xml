@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Línea Sagrada</string>
+    <color name="tva_negro">#0E0E0E</color>
+    <color name="tva_naranja">#FF6A00</color>
+    <style name="Theme.Linea" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/tva_negro</item>
+        <item name="android:statusBarColor">@color/tva_negro</item>
+        <item name="android:navigationBarColor">@color/tva_negro</item>
+    </style>
+</resources>
